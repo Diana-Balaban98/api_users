@@ -26,7 +26,7 @@ users.push(new User("Julia", false, 29));
 const app = express();
 app.use(formData.parse());
 
-const getRes = (num, text, res) => {
+const sendRes = (num, text, res) => {
     res
        .status(num)
        .json(text);
@@ -40,7 +40,7 @@ app.get("/users", (req, res) => {
 
 app.get("/users/:gender", (req, res) => {
     const { gender } = req.params;
-
+ 
     switch (gender) {
         case "M":
             const men = users.filter(el => el.isMan);
@@ -51,7 +51,7 @@ app.get("/users/:gender", (req, res) => {
             res.json(women);
             break;
         default:
-            getRes(400, "Неправильный запрос", res);
+            sendRes(400, "Неправильный запрос", res);
     }
 });
 
@@ -64,7 +64,7 @@ app.get("/filtredUsers", (req, res) => {
         find.length === 0? res.json("Не найдено пользователей, попадающих под диапазон возраста") : res.json(find);
          
     } else {
-        getRes(400, "Превышен диапазон возраста для получения пользователей", res);
+        sendRes(400, "Превышен диапазон возраста для получения пользователей", res);
     }
 })
 
@@ -74,10 +74,10 @@ app.post("/user", (req, res) => {
 
     const { name, isMan, age } = req.body;
 
-    !(name && isMan && age) ? getRes(400, "Заполните нужные поля", res) : users.push(new User(name, isMan, age)) && getRes(201, req.body, res);
+    !(name && isMan && age) ?  sendRes(400, "Заполните нужные поля", res) : users.push(new User(name, isMan, age)) &&  sendRes(201, req.body, res);
 
 } else {
-    getRes(400, "Введите данные", res);
+    sendRes(400, "Введите данные", res);
 }
 });
 
@@ -90,12 +90,12 @@ app.put("/user/:id", (req, res) => {
 
     switch(ind) {
         case -1:
-            getRes(404, "Такого пользователя не существует", res);
+            sendRes(404, "Такого пользователя не существует", res);
             break;
 
         default: 
             if (!(name && isMan && age)) {
-            getRes(400, "Измените все поля пользователя", res);
+                sendRes(400, "Измените все поля пользователя", res);
 
     } else {
             users[ind] = {
@@ -105,7 +105,7 @@ app.put("/user/:id", (req, res) => {
             age
         }
 
-        getRes(201, users[ind], res); 
+        sendRes(201, users[ind], res); 
     }
 }
 });
@@ -120,10 +120,10 @@ app.patch("/user/:id", (req, res) => {
             ...users[ind], 
             ...req.body
     }
-        getRes(201, users[ind], res);
+    sendRes(201, users[ind], res);
 
     } else {
-        getRes(404, "Такого пользователя не существует", res);
+        sendRes(404, "Такого пользователя не существует", res);
     }
 });
 
@@ -134,10 +134,10 @@ app.delete("/user/:id", (req, res) => {
 
     if (ind !== -1) {
         users.splice(ind, 1);
-        getRes(201, true, res);
+        sendRes(201, true, res);
 
     } else {
-        getRes(404, "Такого пользователя не существует", res);
+        sendRes(404, "Такого пользователя не существует", res);
     }
 });
 
